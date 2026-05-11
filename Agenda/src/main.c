@@ -10,7 +10,7 @@ void removerPessoa( void **pBuffer );
 
 
 int main() {
-    void *pBuffer = malloc ( ( sizeof ( int ) * 3 ) + 256 ); // tamanho para o menu, a quantidade de pessoas e rascunho
+    void *pBuffer = malloc ( ( sizeof ( int ) * 3 ) + 256 ); // tamanho para o menu, a quantidade de pessoas, tamanho total do buffer e rascunho
 
     *( int* ) pBuffer = 0; //menu 
     *( ( int* ) pBuffer + 1 ) = 0; //quantidade de pessoas  
@@ -75,7 +75,7 @@ void adicionarPessoa( void **pBuffer ) {
     int *pAntigoTamTotal;
 
     // Definir onde é o rascunho (pula os 3 ints de controle)
-    pRascunhoNome = ( char* )( *pBuffer ) + ( 3 * sizeof ( int ) );
+    pRascunhoNome = ( char* )( *pBuffer ) + ( 3 * sizeof ( int ) ); // nome fica no inicio do rascunho
     pRascunhoEmail = pRascunhoNome + 100; // Reserva 100 bytes pro nome no rascunho
     pRascunhoIdade = ( int* )( pRascunhoEmail + 100 ); // Reserva 100 pro email e usa o resto pra idade
 
@@ -89,14 +89,14 @@ void adicionarPessoa( void **pBuffer ) {
 
     // Calcular o tamanho que esta nova pessoa ocupara
     // [int tam_bloco] + [int idade] + [string nome + \0] + [string email + \0]
-    pNovoBlocoTam = ( int* ) ( pRascunhoIdade + 1 ); // Uso temporário de um ponteiro para guardar a conta
+    pNovoBlocoTam = ( int* ) ( pRascunhoIdade + 1 ); // Uso temporário de pNovoBlocoTam para guardar a conta
     *pNovoBlocoTam = ( sizeof ( int ) * 2 ) + ( strlen ( pRascunhoNome ) + 1 ) + ( strlen( pRascunhoEmail ) + 1 );
 
 
     // Atualizar o tamanho total e dar o Realloc
     pAntigoTamTotal = ( int* ) ( *pBuffer ) + 2; // Ponteiro para o "Tamanho Total" no cabecalho
     
-    // Faz o realloc (o buffer pode mudar de lugar aqui!)
+    // Faz o realloc (o buffer pode mudar de lugar aqui)
     *pBuffer = realloc( *pBuffer, *pAntigoTamTotal + *pNovoBlocoTam );
     
     // Atualizar as etiquetas do rascunho com o novo endereço do buffer
@@ -146,7 +146,7 @@ void listarTodos( void *pBuffer ) {
     pAux = ( char* ) pBuffer + ( 3 * sizeof ( int ) ) + 256;
     
     // Onde o buffer termina (Valor guardado no Tamanho Total)
-    pLimite = ( int* ) ( ( char* ) pBuffer + *( ( int* ) pBuffer + 2 ) );
+    pLimite = ( int* ) ( ( char* ) pBuffer + *( ( int* ) pBuffer + 2 ) ); // uso o tamanho total guardado no cabeçalho para saber onde termina o buffer
 
     printf( "\n--- LISTA DE CONTATOS ---\n" );
     // Enquanto o endereço atual for menor que o endereço do limite
@@ -244,7 +244,7 @@ void removerPessoa( void **pBuffer ) {
             
             // Guarda o tamanho desta pessoa no rascunho (para subtrair depois)
             // Usamos o rascunho + 210 como "váriavel temporária"
-            *( ( int* ) ( pBusca + 210 ) ) = *( ( int* ) pAux ); // Tamanho do bloco que queremos remover
+            *( ( int* ) ( pBusca + 210 ) ) = *( ( int* ) pAux ); // Tamanho do bloco que queremos remover, primeiro lugar da pessoa tem o tamanho dela
 
             // Desloca a memória (memmove)
             // memmove(destino, origem, tamanho_para_copiar)
@@ -253,11 +253,11 @@ void removerPessoa( void **pBuffer ) {
             // Tamanho: O resto da fita (Limite - Origem)
             memmove(pAux, 
                     pAux + ( * ( int* ) pAux ), 
-                    pLimite - ( pAux + ( * ( int* ) pAux ) ));
+                    pLimite - ( pAux + ( * ( int* ) pAux ) )); // trazer tudo que esta depois da pessoa removida para o lugar dela, sobreescrevendo a pessoa removida   
 
             // Atualizar cabeçalho global
             *( ( int* ) ( *pBuffer ) + 1 ) -= 1; // Menos 1 pessoa
-            *( ( int* ) ( *pBuffer ) + 2 ) -= *( ( int* ) ( pBusca + 210 ) ); // Diminui tamanho total tirando o tamanho do bloco removido
+            *( ( int* ) ( *pBuffer ) + 2 ) -= *( ( int* ) ( pBusca + 210 ) ); // Diminui tamanho total tirando o tamanho que guardei no final do rascunho
 
             // Encolher o buffer com realloc
             *pBuffer = realloc( *pBuffer, *( ( int* ) ( *pBuffer ) + 2 ) ); // Usando o novo tamanho total
