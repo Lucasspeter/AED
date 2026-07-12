@@ -33,3 +33,6 @@ Constraints:
 -Esse foi o trabalho que mais tive dificuldade, e o motivo disso e o fato de que nao consegui estudar praticamente nada desse assunto sobre ordenacao, estamos em semana de muitas provas e tenho que ser sincero que acabei ficando sem tempo de me aprofundar. Se semana passada ainda fiquei contente porque minhas ideias do que fazer estavam certas, dessa vez realmente nao consegui, de uma forma ou de outra pelo menos em casa aprendi como fazer o exercicio e tambem um pouco mais sobre como ordenacao funciona.
 
 ## Leetcode:
+
+<img width="794" height="429" alt="image" src="https://github.com/user-attachments/assets/c322b2da-8540-4a13-adee-3dcb17a95232" />
+
